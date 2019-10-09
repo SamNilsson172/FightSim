@@ -10,31 +10,47 @@ namespace FightSim
     {
         int maxHp;
         int maxDmg = 0;
-        float hp;
-        public string name;
+        int hp;
+        readonly string name;
+        Weapon myWeapon;
         static Random generator = new Random();
 
-        public Unit(string _name, int _hp, int _dmg)
+
+        public int Hp
+        {
+            get
+            {
+                return hp;
+            }
+            set
+            {
+                if (value < 0)
+                    value = 0;
+                if (value > maxHp)
+                    value = maxHp;
+                hp = value;
+            }
+        }
+
+        public string Name => name;
+
+        public Unit(string _name, int _hp, int _dmg, Weapon _weapon)
         {
             name = _name;
             maxHp = _hp;
             hp = maxHp;
             maxDmg = _dmg;
+            myWeapon = _weapon;
         }
 
         public int Atk()
         {
-            return generator.Next(0, maxDmg + 1);
+            return generator.Next(maxDmg / 2, maxDmg + 1);
         }
 
         public void Hurt(int dmg)
         {
-            hp -= dmg;
-
-            if (hp < 0)
-                hp = 0;
-            if (hp > maxHp)
-                hp = maxHp;
+            Hp -= dmg;
         }
 
         public bool isAlive()
