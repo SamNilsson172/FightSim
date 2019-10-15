@@ -9,9 +9,9 @@ namespace FightSim
     class Stage
     {
         public string Name { get; }
-        public int a { get; private set; } = 0;  //Active unit
-        Unit[] enemies = new Unit[0];
-        public Unit Enemy => enemies[a];
+        public int A { get; private set; } = 0;  //Active unit
+        readonly Unit[] enemies = new Unit[0];
+        public Unit Enemy => enemies[A];
 
         public Stage(string _name, Unit[] _enemies)
         {
@@ -21,9 +21,10 @@ namespace FightSim
 
         public bool AllDead()
         {
-            if (!enemies[a].IsAlive())
-                a++;
-            return a >= enemies.Length;
+            if (A < enemies.Length)
+                if (!enemies[A].IsAlive())
+                    A++;
+            return A >= enemies.Length;
         }
     }
 

@@ -21,6 +21,18 @@ namespace FightSim
                 return new Stage("One", enemies);
             }
 
+            Stage Two()
+            {
+                Unit[] enemies = { Slime(), Slime() };
+                return new Stage("Two", enemies);
+            }
+
+            Stage Three()
+            {
+                Unit[] enemies = { Slime(), Slime() };
+                return new Stage("Three", enemies);
+            }
+
             Armor Naked()
             {
                 return new Armor("Naked", 0, 1);
@@ -50,6 +62,8 @@ namespace FightSim
             {
                 return new Weapon("Gun", 2, 70);
             }
+
+            bool[] levelLocks = { false, true, true };
             Unit player = new Unit(Input.String(2, 16, false, "Name your player."), 100, Fist(), Naked());
             Item[] testStuff = { Steel(), Gun() };
             player.inventory.AddItem(testStuff);
@@ -85,14 +99,29 @@ namespace FightSim
             void Fight()
             {
                 Stage stage = new Stage(null, null);
-                string[] stages = { "One" };
-                int stageSelected = Input.Selection(stages, "Pick a level", 1);
+                List<string> stages = new List<string>();
+                for (int i = 0; i < levelLocks.Length; i++)
+                {
+                    if (!levelLocks[i])
+                        stages.Add((i + 1).ToString());
+                }
+
+
+                int stageSelected = Input.Selection(stages.ToArray(), "Pick a level", 1);
                 Console.Clear();
                 stageSelected++;
                 switch (stageSelected)
                 {
                     case 1:
                         stage = One();
+                        break;
+
+                    case 2:
+                        stage = Two();
+                        break;
+
+                    case 3:
+                        stage = Three();
                         break;
                 }
                 Console.Clear(); //to not print added items from enemies
@@ -126,6 +155,17 @@ namespace FightSim
                             Input.ClickToContinue();
                             break;
                     }
+                }
+
+                if (stage.AllDead())
+                {
+                    Console.WriteLine(player.Name + " won!");
+                    if (stageSelected != levelLocks.Length)
+                    {
+                        Console.WriteLine("Level " + (stageSelected + 1) + " was unlocked!");
+                        levelLocks[stageSelected] = false;
+                    }
+                    Input.ClickToContinue();
                 }
             }
 
