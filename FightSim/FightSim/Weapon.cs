@@ -8,21 +8,13 @@ namespace FightSim
 {
     class Weapon : Item
     {
-        int dmg;
+        public int Dmg { get; }
 
-        public Weapon(string _name, int _weight, int _dmg)
-            : base(_name, _weight)
+        public Weapon(string _name, int _weight, int _dmg) : base(_name, _weight)
         {
-            dmg = _dmg;
+            Dmg = _dmg;
+            typeText = "Damage: " + Dmg + "\r\n" + "Type: Weapon";
+            type = (int)Types.Weapon;
         }
-
-        public void PrintStats()
-        {
-            Console.WriteLine(base.Name);
-            Console.WriteLine("Weight: " + base.Weight);
-            Console.WriteLine("Damage: " + dmg);
-        }
-
-        public int Dmg => dmg;
     }
 }

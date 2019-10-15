@@ -8,20 +8,17 @@ namespace FightSim
 {
     class Unit
     {
+        public string Name { get; }
+        public Inventory inventory = new Inventory();
         int maxHp;
-        int maxDmg = 0;
-        int hp;
-        readonly string name;
-        Weapon myWeapon;
+        Weapon weapSlot;
+        Armor armoSlot;
         static Random generator = new Random();
 
-
-        public int Hp
+        int hp; //otherwise stackoverflow
+        int Hp
         {
-            get
-            {
-                return hp;
-            }
+            get => hp;
             set
             {
                 if (value < 0)
@@ -32,36 +29,92 @@ namespace FightSim
             }
         }
 
-        public string Name => name;
 
-        public Unit(string _name, int _hp, int _dmg, Weapon _weapon)
+        public Unit(string _name, int _hp, Weapon _weapon, Armor _armor)
         {
-            name = _name;
+            Name = _name;
             maxHp = _hp;
-            hp = maxHp;
-            maxDmg = _dmg;
-            myWeapon = _weapon;
+            Hp = maxHp;
+            weapSlot = _weapon;
+            armoSlot = _armor;
+            Item[] startGear = { _weapon, _armor };
+            inventory.AddItem(startGear);
         }
 
         public int Atk()
         {
-            return generator.Next(maxDmg / 2, maxDmg + 1);
+            return generator.Next(weapSlot.Dmg / 2, weapSlot.Dmg + 1);
         }
 
         public void Hurt(int dmg)
         {
-            Hp -= dmg;
+            Hp -= dmg / armoSlot.Def;
         }
 
-        public bool isAlive()
+        public bool IsAlive()
         {
-            return hp > 0;
+            return Hp > 0;
         }
 
-        public void PrintStats()
+        public string Stats()
         {
-            Console.WriteLine(name + ": " + hp);
+            return Name + ": " + Hp + "/" + maxHp + " hp" + "\r\n"
+                + "Damage: " + weapSlot.Dmg / 2 + "-" + weapSlot.Dmg + "   ~ " + weapSlot.Name + " equiped" + "\r\n"
+                + "Defense: " + armoSlot.Def + "   ~ " + armoSlot.Name + " equiped";
+        }
+        public string BattleStats()
+        {
+            return Name + ": " + Hp + "/" + maxHp + " hp";
         }
 
+        public void ChangeEquipment()
+        {
+            int itemLists = 0;
+            while (itemLists != 2)
+            {
+                string[] itemTypes = { "Weapon", "Armor", "Back" };
+                itemLists = Input.Selection(itemTypes, "Which would you like to change?", 1);
+                Console.Clear();
+
+
+                switch (itemLists)
+                {
+                    case 0:
+                        string[] weaponNames = inventory.AllItemsFromType(itemLists);
+                        AddTextToEquiped(weapSlot.Name, weaponNames);
+                        int choosenWeaponIndex = Input.Selection(weaponNames, "Which one would you like to equip?", 1);
+                        RemoveTextFromEquiped(weapSlot.Name, weaponNames);
+                        weapSlot = (Weapon)inventory.GetItemFromName(weaponNames[choosenWeaponIndex]);
+                        break;
+
+                    case 1:
+                        string[] armorNames = inventory.AllItemsFromType(itemLists);
+                        AddTextToEquiped(armoSlot.Name, armorNames);
+                        int choosenArmorIndex = Input.Selection(armorNames, "Which one would you like to equip?", 1);
+                        RemoveTextFromEquiped(armoSlot.Name, armorNames);
+                        armoSlot = (Armor)inventory.GetItemFromName(armorNames[choosenArmorIndex]);
+                        break;
+
+                    case 2:
+                        break;
+                }
+                Console.Clear();
+            }
+        }
+
+        void AddTextToEquiped(string currentlyEquiped, string[] items)
+        {
+            for (int i = 0; i < items.Length; i++)
+                if (items[i] == currentlyEquiped)
+                    items[i] += " ~ Equiped";
+        }
+
+        void RemoveTextFromEquiped(string currentlyEquiped, string[] items)
+        {
+            for (int i = 0; i < items.Length; i++)
+                if (items[i].Contains(" ~ Equiped"))
+                    items[i] = currentlyEquiped;
+        }
     }
 }
+

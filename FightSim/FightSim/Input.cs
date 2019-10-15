@@ -8,6 +8,13 @@ namespace FightSim
 {
     class Input
     {
+        public static void ClickToContinue()
+        {
+            Console.Write("Press any key to continue...");
+            Console.ReadKey();
+            Console.Clear();
+        }
+
         public static string String(int min, int max, bool lowerCase, string question) //returns a string that the player inputs
         {
             string input = "";
@@ -21,9 +28,7 @@ namespace FightSim
                     Console.WriteLine("Too long, try again!");
                 if (input.Length < min)
                     Console.WriteLine("Too short, try again!");
-                Console.WriteLine("Press any key to continue...");
-                Console.ReadKey(); //to read error message
-                Console.Clear();
+                ClickToContinue(); //to read error message
             }
             if (lowerCase) //if lower case is wanted when called, for checking input agains another string
                 input.ToLower();
@@ -53,9 +58,7 @@ namespace FightSim
                         break;
                     }
                 }
-                Console.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                ClickToContinue();
             }
             return inputInt;
         }

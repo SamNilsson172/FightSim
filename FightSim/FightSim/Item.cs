@@ -8,16 +8,23 @@ namespace FightSim
 {
     class Item
     {
-        string name;
-        int weight;
+        public string Name { get; }
+        public int Weight { get; }
+
+        protected enum Types { Weapon, Armor, Potion }
+        protected int type;
+        public int Type => type;
+        protected string typeText;
 
         public Item(string _name, int _weight)
         {
-            weight = _weight;
-            name = _name;
+            Weight = _weight;
+            Name = _name;
         }
 
-        public string Name => name;
-        public int Weight => weight;
+        public string Stats()
+        {
+            return Name + "\r\n" + "Weight: " + Weight + "\r\n" + typeText;
+        }
     }
 }
