@@ -10,7 +10,7 @@ namespace FightSim
 	{
 		static void Main(string[] args)
 		{
-			Enemy Slime()
+			Enemy Slime() //predefine all wanted instances in methods
 			{
 				Item[] loot = { Small() };
 				return new Enemy("Slime", 20, Fist(), Naked(), 25, loot);
@@ -91,66 +91,64 @@ namespace FightSim
 				return new Potion("Big potion", 3, 30);
 			}
 
-			bool play = true;
-			while (play)
+			bool play = true; //while you still want to play, can be changed upton death
+			while (play) //loop as long as you want to play
 			{
-
-
-				bool[] levelLocks = { false, true, true };
-				string playerName = Input.String(2, 16, false, "Name your player.");
+				bool[] levelLocks = { false, true, true }; //bool array for what levels are locked, only the first one is avalible in the start
+				string playerName = Input.String(2, 16, false, "Name your player."); //lets player choose a name
 				int xp = 0;
-				if (playerName == "Sam Nilsson")
+				if (playerName == "Sam Nilsson") //cheat code
 					xp = 99999999;
-				Unit player = new Unit(playerName, 100, Fist(), Naked(), xp);
+				Unit player = new Unit(playerName, 100, Fist(), Naked(), xp); //create player
 
-				string[] selection = { "Fight", "Inventory", "Check stats", "Change Equipment", "Heal" };
+				string[] selection = { "Fight", "Inventory", "Check stats", "Change Equipment", "Heal" }; //all the things you can do in the game
 
-				while (player.IsAlive())
+				while (player.IsAlive()) //loop as long as the player lives
 				{
-					int selected = Input.Selection(selection, "What would you like to do, " + player.Name + "?", 2);
+					int selected = Input.Selection(selection, "What would you like to do, " + player.Name + "?", 2); //lets you choose what to do
 					Console.Clear();
 
 					switch (selected)
 					{
-						case 0:
+						case 0: //if fight
 							Fight();
 							break;
 
-						case 1:
-							player.inventory.CheckInventory(player.weapSlot, player.armoSlot);
+						case 1: //if check inventory
+							player.inventory.CheckInventory(player.WeapSlot, player.ArmoSlot); //checks the inventory
 							break;
 
-						case 2:
-							Console.WriteLine(player.Stats());
+						case 2: //if check stats
+							Console.WriteLine(player.Stats()); //write players stats
 							Input.ClickToContinue();
 							break;
 
-						case 3:
-							player.ChangeEquipment();
+						case 3: //if change equipment
+							player.ChangeEquipment(); //changes the equipment
 							break;
 
-						case 4:
+						case 4: //if heal
 							Console.Clear();
-							player.HealToFull();
+							player.HealToFull(); //heals the player
 							break;
 					}
 				}
 
-				void Fight()
+				void Fight() //method for fighting
 				{
 					Stage stage = new Stage(null, null);
 					List<string> stages = new List<string>();
-					for (int i = 0; i < levelLocks.Length; i++)
+					for (int i = 0; i < levelLocks.Length; i++) //adds all unlocked stages to a list
 					{
 						if (!levelLocks[i])
 							stages.Add((i + 1).ToString());
 					}
 
-					int stageSelected = Input.Selection(stages.ToArray(), "Pick a level", 1);
+					int stageSelected = Input.Selection(stages.ToArray(), "Pick a level", 1); //lets you choose one
 					Console.Clear();
-					stageSelected++;
+					stageSelected++; //increase to mach name of stages 
 					switch (stageSelected)
-					{
+					{ //create the stage you choose
 						case 1:
 							stage = One();
 							break;
@@ -164,60 +162,61 @@ namespace FightSim
 							break;
 					}
 					Console.Clear(); //to not print added items from enemies
-					string[] fightOpt = { "Attack", "Heal", "Check Opponent", "Run" };
-					bool run = false;
-					while (player.IsAlive() && !stage.AllDead() && !run)
+					string[] fightOpt = { "Attack", "Heal", "Check Opponent", "Run" }; //what you can do in a fight
+					bool run = false; //set to true to break battle loop
+					while (player.IsAlive() && !stage.AllDead() && !run) //loops while player is alive, all enemies are not dead and you havnt run
 					{
-						int fightChoise = Input.Selection(fightOpt, FightStats(stage.Enemy, null, null), 2);
+						int fightChoise = Input.Selection(fightOpt, FightStats(stage.Enemy, null, null), 2); //lets you choose what to do in the fight
 						Console.Clear();
 						switch (fightChoise)
 						{
-							case 0:
-								int pDmg = player.Atk();
-								int eDmg = stage.Enemy.Atk();
-								stage.Enemy.Hurt(pDmg);
-								player.Hurt(eDmg);
-								Console.WriteLine(FightStats(stage.Enemy, pDmg, eDmg));
+							case 0: //if attack
+								int pDmg = player.Atk(); //get players dmg
+								int eDmg = stage.Enemy.Atk(); //get enemys dmg
+								stage.Enemy.Hurt(pDmg); //damage enemy
+								player.Hurt(eDmg); //damge player
+								Console.WriteLine(FightStats(stage.Enemy, pDmg, eDmg)); //write text for looks
 								Input.ClickToContinue();
 								break;
-							case 1:
-								int healed = player.inventory.UsePotion();
-								player.Heal(healed);
+
+							case 1: //if heal
+								int healed = player.inventory.UsePotion(); //gets the amount to heal from used potion
+								player.Heal(healed); //heals
 								Console.Clear();
 								Console.WriteLine(FightStats(stage.Enemy, null, null));
-								Console.WriteLine(player.Name + " healed for " + healed + " hp!");
+								Console.WriteLine(player.Name + " healed for " + healed + " hp!"); //writes out txt from looks
 								Input.ClickToContinue();
 								break;
 
-							case 2:
-								Console.WriteLine(stage.Enemy.Stats());
+							case 2: //if check opponent
+								Console.WriteLine(stage.Enemy.Stats()); //show enemy stats
 								Input.ClickToContinue();
 								break;
 
-							case 3:
-								run = true;
+							case 3: //if run
+								run = true; //set run to true to break loop
 								Console.WriteLine(player.Name + " ran away.");
 								Input.ClickToContinue();
 								break;
 						}
 
-						if (!stage.Enemy.IsAlive())
+						if (!stage.Enemy.IsAlive()) //if an enemy died
 						{
-							int preLvl = player.Level;
-							player.xp += stage.Enemy.xp / 4;
-							int newLvl = player.Level;
-							Console.WriteLine(player.Name + " gained " + stage.Enemy.xp / 4 + " xp!");
-							if (preLvl != newLvl)
+							int preLvl = player.Level; //save current level
+							player.xp += stage.Enemy.xp / 4; //add 1/4 of the enemies xp to the players
+							int newLvl = player.Level; //check new level
+							Console.WriteLine(player.Name + " gained " + stage.Enemy.xp / 4 + " xp!"); //write xp gain
+							if (preLvl != newLvl) //if leveld up write it
 								Console.WriteLine(player.Name + " leveled up to lvl " + newLvl + "!");
-							player.inventory.AddItem(stage.Enemy.Loot());
+							player.inventory.AddItem(stage.Enemy.Loot()); //add enemies loot to player
 							Input.ClickToContinue();
 						}
 					}
 
-					if (stage.AllDead())
+					if (stage.AllDead()) //if all enemies died
 					{
 						Console.WriteLine(player.Name + " won!");
-						if (stageSelected != levelLocks.Length && levelLocks[stageSelected])
+						if (stageSelected != levelLocks.Length && levelLocks[stageSelected]) //unlock new level if one above it exists and is not already unlocked
 						{
 							Console.WriteLine("Level " + (stageSelected + 1) + " was unlocked!");
 							levelLocks[stageSelected] = false;
@@ -225,7 +224,7 @@ namespace FightSim
 						Input.ClickToContinue();
 					}
 
-					if (!player.IsAlive())
+					if (!player.IsAlive()) //if you died, let you quit or try again
 					{
 						string[] extOpt = { "Yes", "No" };
 						int awnser = 0;
@@ -236,7 +235,7 @@ namespace FightSim
 					}
 				}
 
-				string FightStats(Unit enemy, int? pDmg, int? eDmg)
+				string FightStats(Unit enemy, int? pDmg, int? eDmg) //sum txt
 				{
 					string text = "";
 					text += player.BattleStats();

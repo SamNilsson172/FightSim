@@ -8,7 +8,7 @@ namespace FightSim
 {
     class Input
     {
-        public static void ClickToContinue()
+        public static void ClickToContinue() //me me lazy
         {
             Console.Write("Press any key to continue...");
             Console.ReadKey();

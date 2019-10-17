@@ -8,7 +8,7 @@ namespace FightSim
 {
     class Weapon : Item
     {
-        public int Dmg { get; }
+        public int Dmg { get; } //how much dmg weapon deals
 
         public Weapon(string _name, int _weight, int _dmg) : base(_name, _weight)
         {

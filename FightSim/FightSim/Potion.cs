@@ -8,7 +8,7 @@ namespace FightSim
 {
 	class Potion : Item
 	{
-		public int Heal { get; }
+		public int Heal { get; } //amount potion heals
 
 		public Potion(string _name, int _weight, int _heal) : base(_name, _weight)
 		{
